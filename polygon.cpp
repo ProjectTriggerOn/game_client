@@ -8,7 +8,6 @@
 ==============================================================================*/
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include "DirectXTex.h"
 using namespace DirectX;
 #include "direct3d.h"
 #include "shader.h"
