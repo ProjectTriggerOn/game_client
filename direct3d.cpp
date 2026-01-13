@@ -21,6 +21,7 @@ static ID3D11BlendState* g_pBlendStateMultiply = nullptr; // ブレンドステ�
 static ID3D11DepthStencilState* g_pDepthStencilStateDepthDisable = nullptr; // 深度ステンシルステート（深度無効用）
 static ID3D11DepthStencilState* g_pDepthStencilStateDepthEnable = nullptr; // 深度ステンシルステート（深度有効用）
 static ID3D11RasterizerState* g_pRasterizerState = nullptr; // ラスタライザーステート（カリングなし用）
+static ID3D11RasterizerState* g_pRasterizerStateCullNone = nullptr; // ラスタライザーステート（カリングなし用）
 /* バックバッファ関連 */
 static ID3D11RenderTargetView* g_pRenderTargetView = nullptr;
 static ID3D11Texture2D* g_pDepthStencilBuffer = nullptr;
@@ -159,6 +160,11 @@ bool Direct3D_Initialize(HWND hWnd)
 	// デバイスコンテキストにラスタライザーステートを設定
 	g_pDeviceContext->RSSetState(g_pRasterizerState);
 
+	// カリングなしのラスタライザステート作成
+	rd.CullMode = D3D11_CULL_NONE;
+	hr = g_pDevice->CreateRasterizerState(&rd, &g_pRasterizerStateCullNone);
+	if (FAILED(hr)) return false;
+
     return true;
 }
 
@@ -167,6 +173,8 @@ void Direct3D_Finalize()
 	SAFE_RELEASE(g_pDepthStencilStateDepthDisable)
 	SAFE_RELEASE(g_pDepthStencilStateDepthEnable)
 	SAFE_RELEASE(g_pBlendStateMultiply)
+	SAFE_RELEASE(g_pRasterizerState)
+	SAFE_RELEASE(g_pRasterizerStateCullNone)
 
 	releaseBackBuffer();
 
@@ -224,6 +232,22 @@ void Direct3D_SetDepthEnable(bool enable)
 	{
 		g_pDeviceContext->OMSetDepthStencilState(g_pDepthStencilStateDepthDisable, NULL);
 
+	}
+}
+
+void Direct3D_SetCullMode(D3D11_CULL_MODE mode)
+{
+	switch (mode)
+	{
+	case D3D11_CULL_BACK:
+		g_pDeviceContext->RSSetState(g_pRasterizerState);
+		break;
+	case D3D11_CULL_NONE:
+		g_pDeviceContext->RSSetState(g_pRasterizerStateCullNone);
+		break;
+	default:
+		// 他のモードが必要なら追加
+		break;
 	}
 }
 
