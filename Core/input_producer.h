@@ -67,6 +67,7 @@ private:
     uint32_t m_Buttons;         // Button bitfield
     
     bool m_JumpPending;         // Sticky jump: persists until server processes
+    bool m_ReloadPending;
 
     InputCmd m_LastCmd;         // Most recent command sent
 

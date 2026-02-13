@@ -24,6 +24,7 @@ InputProducer::InputProducer()
     , m_Pitch(0.0f)
     , m_Buttons(InputButtons::NONE)
     , m_JumpPending(false)
+    , m_ReloadPending(false)
     , m_LastCmd{}
 {
 }
@@ -38,6 +39,7 @@ void InputProducer::Initialize(INetwork* pNetwork)
     m_Pitch = 0.0f;
     m_Buttons = InputButtons::NONE;
     m_JumpPending = false;
+    m_ReloadPending = false;
     m_LastCmd = {};
     m_LastServerState = {};
     m_HasServerState = false;
@@ -78,6 +80,13 @@ void InputProducer::Update()
         {
             m_JumpPending = false;
         }
+    }
+
+    // Clear sticky reload once sent (unlike jump, we don't need server confirmation, just ensuring it survives one tick)
+    if (m_ReloadPending)
+    {
+         // We sent it in m_LastCmd, so clear it for next frame IF we essentially want "at least one frame" behavior.
+         m_ReloadPending = false; 
     }
 
     // Increment target tick for next frame
@@ -137,6 +146,10 @@ void InputProducer::SampleInput()
         m_Buttons |= InputButtons::ADS;
     
     if (KeyLogger_IsTrigger(KK_R))
+    {
+        m_ReloadPending = true;
+    }
+    if (m_ReloadPending)
         m_Buttons |= InputButtons::RELOAD;
     
     if (KeyLogger_IsTrigger(KK_E))

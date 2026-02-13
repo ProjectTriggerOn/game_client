@@ -334,6 +334,9 @@ void PlayerCamFps_Debug(const Player_Fps& pf)
 		ss << "SnapTimes: " << std::fixed << std::setprecision(2) 
 		   << g_pRemotePlayer->GetOldestSnapshotTime() << " - " 
 		   << g_pRemotePlayer->GetNewestSnapshotTime() << "\n";
+		ss << "PlayerState: " << g_pRemotePlayer->GetPlayerStateString() << "\n";
+		ss << "WeaponState: " << g_pRemotePlayer->GetWeaponStateString() << "\n";
+		ss << "Flags: 0x" << std::hex << g_pRemotePlayer->GetStateFlags() << std::dec << "\n";
 	}
 
 	g_DebugText->SetText(ss.str().c_str());

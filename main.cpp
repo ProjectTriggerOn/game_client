@@ -123,7 +123,7 @@ int APIENTRY WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE,_In_ LPSTR lpC
 	if (g_UseENet)
 	{
 		// ENet mode: connect to remote server
-		const char* serverHost = "127.0.0.1";
+		const char* serverHost = "35.79.77.225";
 		uint16_t serverPort = 7777;
 
 		// Parse optional --host=X and --port=X

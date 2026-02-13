@@ -63,6 +63,7 @@ public:
     float GetPitch() const { return m_Pitch; }
     bool IsActive() const { return m_IsActive; }
     float GetHeight() const { return m_Height; }
+    uint32_t GetStateFlags() const { return m_StateFlags; }
     
     DirectX::XMFLOAT3 GetEyePosition() const;
     

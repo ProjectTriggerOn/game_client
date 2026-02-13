@@ -41,6 +41,8 @@ void MockServer::Initialize(INetwork* pNetwork)
 
     // Initialize last input
     m_LastInputCmd = {};
+    m_WeaponTimer = 0.0f;
+    m_Ammo = 30;
 }
 
 void MockServer::Finalize()
@@ -136,6 +138,20 @@ void MockServer::ProcessInputCmd(const InputCmd& cmd)
     else
         flags &= ~NetStateFlags::IS_ADS;
 
+    // Weapon Action Inputs (State Machine Triggers)
+    if (cmd.buttons & InputButtons::RELOAD) {
+         m_WeaponTimer = 2.5f;
+         if (m_Ammo > 0)
+             flags |= NetStateFlags::IS_RELOADING;
+         else
+             flags |= NetStateFlags::IS_RELOADING_EMPTY;
+         
+         m_Ammo = 30;
+    }
+    else if (flags & NetStateFlags::IS_FIRING) {
+         if (m_Ammo > 0) m_Ammo--;
+    }
+
     m_PlayerState.stateFlags = flags;
 }
 
@@ -150,6 +166,19 @@ void MockServer::ProcessInputCmd(const InputCmd& cmd)
 void MockServer::SimulatePhysics()
 {
     const float dt = static_cast<float>(TICK_DURATION);
+
+    // Update Weapon Timer
+    if (m_WeaponTimer > 0.0f) {
+        m_WeaponTimer -= dt;
+        if (m_WeaponTimer <= 0.0f) {
+            m_PlayerState.stateFlags &= ~NetStateFlags::IS_RELOADING;
+            m_PlayerState.stateFlags &= ~NetStateFlags::IS_RELOADING_EMPTY;
+        }
+    }
+    else {
+        m_PlayerState.stateFlags &= ~NetStateFlags::IS_RELOADING;
+        m_PlayerState.stateFlags &= ~NetStateFlags::IS_RELOADING_EMPTY;
+    }
     
     // ========================================================================
     // MOVEMENT PARAMETERS (CS:GO / Valorant style)

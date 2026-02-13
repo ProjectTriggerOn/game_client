@@ -266,23 +266,17 @@ void RemotePlayerStateMachine::Update(double elapsed_time, Animator* animator)
     
     switch (m_WeaponState)
     {
-    case RemoteWeaponState::HIP_FIRING:
+    case RemoteWeaponState::FIRING:
         animationIndex = ANI_FIRE;
         isLoopAnimation = false;
         break;
     case RemoteWeaponState::RELOADING:
-        animationIndex = ANI_RELOAD_AMMO_LEFT; // Default to this one
+        animationIndex = ANI_RELOAD_AMMO_LEFT;
         isLoopAnimation = false;
         break;
-    case RemoteWeaponState::ADS:
-        // No ADS specific walk/run present in simple list, but might just affect upper body in future.
-        // For now, if moving, keep movement. If Idle, maybe use pose ref?
-        // Logic: if Moving, ignore ADS state for full body ani.
-        if (m_PlayerState == RemotePlayerState::IDLE)
-        {
-             // Maybe use Reference pose or specific ADS idle? 
-             // List has 'pose_ref' and 'reference'.
-        }
+    case RemoteWeaponState::RELOADING_EMPTY:
+        animationIndex = ANI_RELOAD_OUT_OF_AMMO;
+        isLoopAnimation = false;
         break;
     default:
         break;
@@ -317,10 +311,9 @@ std::string RemotePlayerStateMachine::GetWeaponStateString() const
     switch (m_WeaponState)
     {
     case RemoteWeaponState::HIP: return "HIP";
-    case RemoteWeaponState::HIP_FIRING: return "FIRING";
-    case RemoteWeaponState::ADS: return "ADS";
-    case RemoteWeaponState::ADS_FIRING: return "ADS_FIRE";
+    case RemoteWeaponState::FIRING: return "FIRING";
     case RemoteWeaponState::RELOADING: return "RELOAD";
+    case RemoteWeaponState::RELOADING_EMPTY: return "RELOAD_EMPTY";
     default: return "UNKNOWN";
     }
 }

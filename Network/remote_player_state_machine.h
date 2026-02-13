@@ -28,10 +28,9 @@ enum class RemotePlayerState
 enum class RemoteWeaponState
 {
     HIP,
-    HIP_FIRING,
-    ADS,
-    ADS_FIRING,
+    FIRING,
     RELOADING,
+    RELOADING_EMPTY,
 };
 
 //-----------------------------------------------------------------------------

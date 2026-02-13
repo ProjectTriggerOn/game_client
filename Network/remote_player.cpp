@@ -257,6 +257,19 @@ void RemotePlayer::Update(double elapsed_time, double currentTime)
         m_StateMachine->DeriveStateFromVelocity(
             m_Velocity.x, m_Velocity.z, m_Velocity.y, isGrounded, m_Yaw
         );
+
+        // Map Network Flags to Remote Weapon State
+        RemoteWeaponState weaponState = RemoteWeaponState::HIP;
+        
+        if (m_StateFlags & NetStateFlags::IS_RELOADING_EMPTY)
+            weaponState = RemoteWeaponState::RELOADING_EMPTY;
+        else if (m_StateFlags & NetStateFlags::IS_RELOADING)
+            weaponState = RemoteWeaponState::RELOADING;
+        else if (m_StateFlags & NetStateFlags::IS_FIRING)
+             weaponState = RemoteWeaponState::FIRING;
+            
+        m_StateMachine->SetWeaponState(weaponState);
+
         m_StateMachine->Update(elapsed_time, m_Animator);
     }
     
